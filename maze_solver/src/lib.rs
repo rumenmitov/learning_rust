@@ -64,21 +64,23 @@ fn walk(maze :&Vec<Vec<char>>, curr :Point, end :Rc<Point>, path :&mut Vec<Rc<Po
         return false;
     }
 
-    let directions = [
-        [ 1, 0 ],
-        [ 0, 1 ],
-    ];
-
     let curr_ref = Rc::new(curr);
+
+    let directions :[ [usize; 2]; 4 ] = [
+        [ curr_ref.x + 1, curr_ref.y + 0 ],
+        [ curr_ref.x.checked_sub(1).unwrap_or(0), curr_ref.y + 0 ],
+        [ curr_ref.x + 0, curr_ref.y + 1 ],
+        [ curr_ref.x + 0, curr_ref.y.checked_sub(1).unwrap_or(0) ],
+    ];
 
     seen.insert(Rc::clone(&curr_ref));
     path.push(Rc::clone(&curr_ref));
 
-    for i in 0..2 {
+    for i in 0..4 {
 
         let new_curr = Point {
-            x: curr_ref.x + directions[i][0],
-            y: curr_ref.y + directions[i][1],
+            x: directions[i][0],
+            y: directions[i][1],
         };
 
         if walk(maze, new_curr, Rc::clone(&end), path, seen) == true {
@@ -184,7 +186,30 @@ mod tests {
             y: 4
         };
 
-        let solution = String::from("#*  #\n#*# #\n#*# #\n#*  #\n#*###\n");
+        let solution = String::from("#***#\n# #*#\n# #*#\n#***#\n#*###\n");
+
+        assert_eq!(solve_maze(&mut maze, start, end), solution);
+    }
+
+    #[test]
+    fn test_reverse() {
+        let mut maze = vec![
+            vec!['#', '#', ' ', '#', '#'],
+            vec!['#', '#', ' ', ' ', ' '],
+            vec!['#', '#', '#', '#', '#'],
+        ];
+
+        let start = Point {
+            x: 4,
+            y: 1
+        };
+
+        let end = Point {
+            x: 2,
+            y: 0
+        };
+
+        let solution = String::from("##*##\n##***\n#####\n");
 
         assert_eq!(solve_maze(&mut maze, start, end), solution);
     }
