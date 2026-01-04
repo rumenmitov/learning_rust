@@ -1,0 +1,1 @@
+Cause a SEGFAULT by not pinning pointer in self-referential struct.
